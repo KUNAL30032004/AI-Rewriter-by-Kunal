@@ -1,32 +1,41 @@
-import Groq from "groq-sdk";
+// api/rewrite.js
 
 export default async function handler(req, res) {
   if (req.method !== "POST") {
-    return res.status(405).json({ error: "Method not allowed" });
+    res.setHeader("Allow", ["POST"]);
+    return res.status(405).end(`Method ${req.method} Not Allowed`);
   }
 
   const { text } = req.body;
 
-  const groq = new Groq({
-    apiKey: process.env.GROQ_API_KEY,
-  });
+  if (!text) {
+    return res.status(400).json({ error: "No text provided" });
+  }
 
   try {
-    const completion = await groq.chat.completions.create({
-      messages: [
-        {
-          role: "user",
-          content: `Rewrite this assignment in human natural style and remove AI plagiarism:\n\n${text}`
-        }
-      ],
-      model: "llama-3.3-70b-versatile",
+    // Call the GROQ API
+    const response = await fetch("https://api.groq.com/rewrite", { 
+      method: "POST",
+      headers: {
+        "Authorization": `Bearer ${process.env.GROQ_API_KEY}`,
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({ text })
     });
 
-    res.status(200).json({
-      result: completion.choices[0].message.content
-    });
+    if (!response.ok) {
+      const errorText = await response.text();
+      return res.status(response.status).json({ error: errorText });
+    }
+
+    const data = await response.json();
+
+    // Adjust based on how GROQ API returns rewritten text
+    // Assuming it returns { rewritten: "..." }
+    return res.status(200).json({ rewritten: data.rewritten });
 
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    console.error("GROQ API error:", err);
+    return res.status(500).json({ error: "Failed to call GROQ API" });
   }
 }
