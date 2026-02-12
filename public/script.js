@@ -18,10 +18,10 @@ score.innerText = "";
 const prompt = `Rewrite the following assignment in a ${mode.value} tone so that it becomes natural, human written and plagiarism safe. Do not shorten content.\n\n${input.value}`;
 
 
-fetch("/api/rewrite", {  // <- relative path to API route
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ text: userInput })
+fetch("/api/rewrite", {
+  method: "POST",
+  headers: { "Content-Type": "application/json" },
+  body: JSON.stringify({ text: userInput })
 })
 .then(res => res.json())
 .then(data => {
