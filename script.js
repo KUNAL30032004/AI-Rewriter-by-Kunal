@@ -1,31 +1,36 @@
 const btn = document.getElementById("rewriteBtn");
-const input = document.getElementById("inputText");
-const output = document.getElementById("outputText");
-const loading = document.getElementById("loading");
-const score = document.getElementById("score");
-const mode = document.getElementById("mode");
-
+const inputBox = document.getElementById("inputText");
+const outputBox = document.getElementById("outputText");
 
 btn.onclick = async () => {
-if (!input.value.trim()) return alert("Paste text first");
 
+  const text = inputBox.value.trim();
 
-loading.classList.remove("hidden");
-output.value = "";
-score.innerText = "";
+  if (!text) {
+    outputBox.innerText = "Please enter some text first 🙂";
+    return;
+  }
 
+  outputBox.innerText = "Rewriting... ✨";
 
-const prompt = `Rewrite the following assignment in a ${mode.value} tone so that it becomes natural, human written and plagiarism safe. Do not shorten content.\n\n${input.value}`;
+  try {
+    const res = await fetch("/api/rewrite", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({ text })
+    });
 
+    const data = await res.json();
 
-fetch("/api/rewrite", {
-  method: "POST",
-  headers: { "Content-Type": "application/json" },
-  body: JSON.stringify({ text: userInput })
-})
-.then(res => res.json())
-.then(data => {
-    outputElement.textContent = data.rewritten;
-})
-.catch(err => console.error(err));
-}
+    if (data.result) {
+      outputBox.innerText = data.result;
+    } else {
+      outputBox.innerText = "Error: " + data.error;
+    }
+
+  } catch (err) {
+    outputBox.innerText = "Server not responding 🚨";
+  }
+};
