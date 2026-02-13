@@ -7,16 +7,38 @@
 <link rel="stylesheet" href="style.css" />
 </head>
 <body>
+
+    <div id="introOverlay">
+  <div class="introCard">
+    <h1 class="introTitle">AI Assignment Rewriter</h1>
+    <p class="introSubtitle">Turn robotic AI text into natural human writing</p>
+
+    <div class="demoBox">
+      <div class="demoInput" id="demoInput"></div>
+      <div class="arrow">⬇</div>
+      <div class="demoOutput" id="demoOutput"></div>
+    </div>
+
+    <button id="startBtn">Start Now</button>
+    
+  </div>
+
+  <div class="signature">Made with ❤️ by Kunal</div>
+</div>
     
     <div class="bg-slideshow"></div>
-
+<div class="brand-credit">
+  Made with ❤️ by Kunal
+</div>
 <div class="container">
+    
 <h1>🧠 AI Assignment Humanizer</h1>
-<p class="subtitle">I will convert your AI text to human language please paste your assignment here...</p>
+
+<p class="subtitle">Make your assignment natural & plagiarism‑safe </p>
 
 
 <div class="card">
-<textarea id="inputText" placeholder="Paste your assignment here..."></textarea>
+<textarea id="inputText" placeholder=" I will convert your AI text to human language please paste your assignment here..."></textarea>
 
 
 <div class="controls">
@@ -39,10 +61,13 @@
 <textarea id="outputText" readonly></textarea>
 <div id="score"></div>
 </div>
+
+
 </div>
 
 
 <script src="config.js"></script>
 <script src="script.js"></script>
+
 </body>
 </html>
