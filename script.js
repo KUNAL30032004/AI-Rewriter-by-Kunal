@@ -1,31 +1,73 @@
 const btn = document.getElementById("rewriteBtn");
-const input = document.getElementById("inputText");
-const output = document.getElementById("outputText");
-const loading = document.getElementById("loading");
-const score = document.getElementById("score");
-const mode = document.getElementById("mode");
-
+const inputBox = document.getElementById("inputText");
+const outputBox = document.getElementById("outputText");
 
 btn.onclick = async () => {
-if (!input.value.trim()) return alert("Paste text first");
 
+  const text = inputBox.value.trim();
 
-loading.classList.remove("hidden");
-output.value = "";
-score.innerText = "";
+  if (!text) {
+    outputBox.innerText = "Please enter some text first 🙂";
+    return;
+  }
 
+  outputBox.innerText = "Rewriting... ✨";
 
-const prompt = `Rewrite the following assignment in a ${mode.value} tone so that it becomes natural, human written and plagiarism safe. Do not shorten content.\n\n${input.value}`;
+  try {
+    const res = await fetch("/api/rewrite", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({ text })
+    });
 
+    const data = await res.json();
 
-fetch("/api/rewrite", {
-  method: "POST",
-  headers: { "Content-Type": "application/json" },
-  body: JSON.stringify({ text: userInput })
-})
-.then(res => res.json())
-.then(data => {
-    outputElement.textContent = data.rewritten;
-})
-.catch(err => console.error(err));
+    if (data.result) {
+      outputBox.innerText = data.result;
+    } else {
+      outputBox.innerText = "Error: " + data.error;
+    }
+
+  } catch (err) {
+    outputBox.innerText = "Server not responding 🚨";
+  }
+};
+const demoInputText = `Artificial intelligence is a branch of computer science that focuses on creating machines capable of performing tasks that typically require human intelligence.`;
+
+const demoOutputText = `Artificial intelligence is an area of computing where machines are designed to carry out tasks that normally need human thinking and understanding.`;
+
+const demoIn = document.getElementById("demoInput");
+const demoOut = document.getElementById("demoOutput");
+const startBtn = document.getElementById("startBtn");
+const overlay = document.getElementById("introOverlay");
+
+function typeText(element, text, speed=20){
+  return new Promise(resolve=>{
+    element.innerHTML="";
+    let i=0;
+    const interval=setInterval(()=>{
+      element.innerHTML+=text[i];
+      i++;
+      if(i>=text.length){clearInterval(interval);resolve();}
+    },speed);
+  });
 }
+
+async function runDemoLoop(){
+  while(true){
+    await typeText(demoIn,demoInputText,18);
+    await new Promise(r=>setTimeout(r,600));
+    await typeText(demoOut,demoOutputText,18);
+    await new Promise(r=>setTimeout(r,2000));
+    demoIn.innerHTML="";
+    demoOut.innerHTML="";
+  }
+}
+
+runDemoLoop();
+
+startBtn.onclick=()=>{
+  overlay.style.display="none";
+};
