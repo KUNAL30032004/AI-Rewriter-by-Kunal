@@ -70,8 +70,4 @@ runDemoLoop();
 
 startBtn.onclick=()=>{
   overlay.style.display="none";
-<<<<<<< HEAD
 };
-=======
-};
->>>>>>> 67e5258c3544fe32c5960472f37c2f68d7b28a6b
